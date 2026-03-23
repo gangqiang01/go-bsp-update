@@ -1,6 +1,8 @@
 package utils
 
 import (
+	"crypto/md5"
+	"fmt"
 	"net"
 	"strings"
 	"time"
@@ -18,6 +20,12 @@ func NewUUID() string {
 // return ms
 func GetNowTimeStamp() int64 {
 	return int64(time.Now().UnixNano() / 1e6)
+}
+func Md5V(str string) string {
+	data := []byte(str)
+	has := md5.Sum(data)
+	md5str := fmt.Sprintf("%x", has)
+	return md5str
 }
 
 /*

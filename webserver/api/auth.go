@@ -1,46 +1,44 @@
 package api
 
 import (
+	"github.com/edgehook/ithings/common/dbm/model"
+	v1 "github.com/edgehook/ithings/common/types/v1"
+	"github.com/edgehook/ithings/common/utils"
+	"github.com/edgehook/ithings/webserver/api/jwt"
 	responce "github.com/edgehook/ithings/webserver/types"
 	"github.com/gin-gonic/gin"
+	"k8s.io/klog"
 )
 
 func Login(c *gin.Context) {
-	// type auth struct {
-	// 	Username string `form:"username" json:"username"`
-	// 	Password string `form:"password" json:"password"`
-	// }
-
+	var auth v1.Auth
+	if err := c.Bind(&auth); err != nil {
+		responce.FailWithMessage("Parameter error", c)
+		return
+	}
 	type resp struct {
 		AccessToken string `form:"accessToken" json:"accessToken"`
 	}
-	// var authInfo auth
-	// if err := c.Bind(&authInfo); err != nil {
-	// 	responce.FailWithMessage("Parameter error", c)
-	// 	return
-	// }
 
-	// body, err := json.Marshal(authInfo)
-	// if err != nil {
-	// 	responce.FailWithMessage("Json Marshal with  err %v", c)
-	// 	return
-	// }
-	// appHubResponse, err := isync.SendMsgToAppHub("login", string(body))
+	user, err := model.GetUserByName(auth.Username)
+	if err != nil {
+		responce.FailWithMessage("User authentication error", c)
+		return
+	}
 
-	// if err != nil {
-	// 	responce.FailWithMessage(fmt.Sprintf("Send msg to AppHub with  err %v", err), c)
-	// 	return
-	// }
+	enPwd := utils.Md5V(auth.Password)
+	klog.Infof("password: %v, enpassword: %v", auth.Password, enPwd)
+	if enPwd != user.Password {
+		responce.FailWithMessage("User authentication error", c)
+		return
+	}
 
-	// if appHubResponse.StatusCode != "200" {
-	// 	responce.FailWithMessage(fmt.Sprintf("Send msg to AppHub with  err %v", appHubResponse.Msg), c)
-	// 	return
-	// }
-
-	// responce.OkWithData(&resp{
-	// 	AccessToken: appHubResponse.Msg,
-	// }, c)
+	token, err := jwt.GenerateToken(auth.Username)
+	if err != nil {
+		responce.FailWithMessage("Grnerate token error", c)
+		return
+	}
 	responce.OkWithData(&resp{
-		AccessToken: "",
+		AccessToken: token,
 	}, c)
 }

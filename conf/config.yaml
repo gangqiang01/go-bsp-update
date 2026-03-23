@@ -14,7 +14,10 @@ db:
     passwd: postgres
     port: 5432
     usr: postgres
-  used: postgre
+  sqlite:
+    dbpath: bsp.db
+    log_level: info
+  used: sqlite
 transport:
   isyncor:
     server_address: 127.0.0.1:50051
@@ -27,7 +30,7 @@ transport:
     certfile: ./certs/client.crt
     keyfile: ./certs/client.key
 webserver:
-  bind_address: :8090
+  bind_address: :8080
   ssl: false
   ssl_cert_file: ""
   ssl_key_file: ""

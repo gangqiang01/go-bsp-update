@@ -10,27 +10,8 @@ import (
  */
 func RegisterTables(db *gorm.DB) error {
 	err := db.AutoMigrate(
-		&DeviceModel{},
-		&ServiceModel{},
-		&PropertyModel{},
-		&EventModel{},
-		&CommandModel{},
-		&DeviceInstance{},
-		&ServiceInstance{},
-		&RuleLinkage{},
-		&RuleLinkageLog{},
-		&PropertyInstance{},
-		&EventInstance{},
-		&CommandInstance{},
-		&ProtocolTypes{},
-		&AlertConfig{},
-		&AlertLog{},
-		&AlertHistory{},
-		&EventRuleRelation{},
-		&DataForward{},
-		&DataForwardLog{},
-		&DeviceDataForwardRelation{})
-
+		&User{},
+		&Bsp{})
 	if err != nil {
 		return err
 	}

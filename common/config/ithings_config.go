@@ -2,10 +2,12 @@ package config
 
 import (
 	"fmt"
-	_ "k8s.io/klog/v2"
 	"os"
 	"strconv"
 	"sync"
+
+	"k8s.io/klog"
+	_ "k8s.io/klog/v2"
 )
 
 const ()
@@ -88,15 +90,16 @@ func GetDBConfig() *DBConfig {
 		}
 
 		dbConfig.Mysql = mysql
-	case "sqlite3":
+	case "sqlite":
 		sq := &SQLite{}
-
-		sq.DbPath = ITHINGS_CONFIG.GetString("db.sqlite.dbpath")
+		pwd, _ := os.Getwd()
+		sq.DbPath = pwd + string(os.PathSeparator) + ITHINGS_CONFIG.GetString("db.sqlite.dbpath")
+		klog.V(4).Infof("sqlite path: %v", sq.DbPath)
 		sq.LogLevel = ITHINGS_CONFIG.GetString("db.sqlite.log_level")
 		if sq.DbPath == "" {
 			return nil
 		}
-
+		klog.V(4).Infof("sqlite config: %v", sq)
 		dbConfig.SQLite3 = sq
 	default:
 		pg := &Postgresql{}

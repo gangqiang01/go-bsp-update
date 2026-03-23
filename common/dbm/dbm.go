@@ -1,17 +1,17 @@
 package dbm
 
 import (
+	"time"
+
 	"github.com/edgehook/ithings/common/config"
 	"github.com/edgehook/ithings/common/dbm/model"
 	"github.com/edgehook/ithings/common/global"
-	"github.com/edgehook/ithings/common/influxdbm"
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/postgres"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 	"k8s.io/klog/v2"
-	"time"
 )
 
 // GormInit init the database according to the config file.
@@ -126,7 +126,5 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
-	//init influxdb
-	influxdbm.InitInfluxDb()
 
 }

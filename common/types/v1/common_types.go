@@ -10,4 +10,9 @@ const (
 	//run status
 	StatusEnable  string = "enable"
 	StatusDisable string = "disable"
+
+	//default user &pwd
+
+	DefaultUsername string = "admin"
+	DefaultPassword string = "admin"
 )
