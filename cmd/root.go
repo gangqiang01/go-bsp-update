@@ -5,7 +5,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	_ "github.com/edgehook/ithings/common/dbm"
 	"github.com/edgehook/ithings/webserver"
 	"github.com/jwzl/beehive/pkg/core"
 	"github.com/spf13/cobra"

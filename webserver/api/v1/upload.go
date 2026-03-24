@@ -5,7 +5,6 @@ import (
 	"io"
 	"strconv"
 
-	"github.com/edgehook/ithings/common/dbm/model"
 	"github.com/edgehook/ithings/common/utils"
 	responce "github.com/edgehook/ithings/webserver/types"
 	"github.com/gin-gonic/gin"
@@ -82,23 +81,18 @@ func UploadChunkHandler(c *gin.Context) {
 
 		// Clean up temporary files
 		utils.CleanupTempFiles(upload.FileID)
-		if model.IsExistByMd5(fileName, fileMD5) {
-			responce.Ok(c)
-			return
-		}
-		if err := model.AddBsp(&model.Bsp{
-			ID:       utils.NewUUID(),
-			Filename: upload.FileName,
-			Md5:      fileMD5,
-			Path:     mergedPath,
-			Size:     upload.FileSize,
-		}); err != nil {
-			responce.FailWithMessage("Failed to add bsp db", c)
-			return
-		}
 		responce.Ok(c)
 		return
 	}
 
+	responce.Ok(c)
+}
+
+func RebootHandler(c *gin.Context) {
+	go func() {
+		if err := utils.SysReboot(); err != nil {
+			klog.Errorf("system reboot failed: %v", err)
+		}
+	}()
 	responce.Ok(c)
 }

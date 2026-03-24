@@ -3,9 +3,7 @@ package middlewares
 import (
 	"net/http"
 	"runtime/debug"
-	"strings"
 
-	"github.com/edgehook/ithings/webserver/api/jwt"
 	responce "github.com/edgehook/ithings/webserver/types"
 	"github.com/gin-gonic/gin"
 	"k8s.io/klog/v2"
@@ -34,21 +32,6 @@ func Cors() gin.HandlerFunc {
 			return
 		}
 
-		path := c.FullPath()
-		if strings.Contains(path, "login") ||
-			strings.Contains(path, "upload") {
-			c.Next()
-			return
-		}
-		token := GetToken(c)
-
-		if strings.Contains(path, "v1") && !VerifyToken(token) {
-			responce.FailWithCodeAndMessage(401, "illegal user", c)
-			//stop context
-			c.Abort()
-			return
-		}
-
 		defer func() {
 			if err := recover(); err != nil {
 				klog.Errorf("WebServer error occurred at:%s", string(debug.Stack()))
@@ -58,27 +41,4 @@ func Cors() gin.HandlerFunc {
 
 		c.Next()
 	}
-}
-
-func GetToken(c *gin.Context) string {
-	token := c.Request.Header.Get("accesstoken")
-	if token == "" {
-		token = c.Request.Header.Get("Authorization")
-		if token != "" {
-			if strings.Contains(token, "bearer") || strings.Contains(token, "Bearer") {
-				if len(token) > 7 {
-					token = token[7:]
-				}
-			}
-		}
-	}
-
-	return token
-}
-
-func VerifyToken(token string) bool {
-	if _, err := jwt.ParseCliamsToken(token); err != nil {
-		return false
-	}
-	return true
 }

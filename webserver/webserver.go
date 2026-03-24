@@ -6,14 +6,10 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-	"runtime/debug"
 	"syscall"
 	"time"
 
 	"github.com/edgehook/ithings/common/config"
-	"github.com/edgehook/ithings/common/dbm/model"
-	v1 "github.com/edgehook/ithings/common/types/v1"
-	"github.com/edgehook/ithings/common/utils"
 	"github.com/edgehook/ithings/webserver/router"
 	"github.com/jwzl/beehive/pkg/core"
 	"k8s.io/klog"
@@ -50,7 +46,6 @@ func (ws *WebServer) Enable() bool {
 
 // Start this module.
 func (ws *WebServer) Start() {
-	initDb()
 	var err error
 
 	initRouter := router.InitRouter()
@@ -125,28 +120,4 @@ func createServerTLSConfiguration() *tls.Config {
 			tls.TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305,
 		},
 	}
-}
-
-func initDb() {
-	go func() {
-		defer func() {
-			if err := recover(); err != nil {
-				klog.Errorf("initDb failed with err: %v", string(debug.Stack()))
-			}
-		}()
-		enPwd := utils.Md5V(v1.DefaultPassword)
-		if !model.IsExistUserByName(v1.DefaultUsername) {
-			klog.Infof("admin user exist")
-			id := utils.NewUUID()
-			if err := model.AddUser(&model.User{
-				ID:       id,
-				Name:     v1.DefaultUsername,
-				Password: enPwd,
-				Rule:     "",
-			}); err != nil {
-				klog.Errorf("Add user config error: %v", err.Error())
-			}
-		}
-	}()
-
 }

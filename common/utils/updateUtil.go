@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"os"
+	"path/filepath"
 	"sync"
 	"time"
 
@@ -100,10 +101,11 @@ func UpdateUploadStatus(upload *UploadStatus, chunkIndex int, chunkPath string) 
 // Merge chunks
 func MergeChunks(upload *UploadStatus) (string, string, error) {
 	// Create final file path
-	finalPath := fmt.Sprintf("./uploads/%s_%s", upload.FileID, upload.FileName)
+	ext := filepath.Ext(upload.FileName)
+	finalPath := "rootfs" + ext
 
 	// 确保 uploads 目录存在
-	if err := os.MkdirAll("./uploads", 0755); err != nil {
+	if err := os.MkdirAll("/opt", 0755); err != nil {
 		return "", "", fmt.Errorf("Failed to create uploads directory: %v", err)
 	}
 

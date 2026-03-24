@@ -4,6 +4,9 @@ import (
 	"crypto/md5"
 	"fmt"
 	"net"
+	"os"
+	"os/exec"
+	"runtime"
 	"strings"
 	"time"
 
@@ -53,4 +56,61 @@ func GetLocalMACs() []string {
 	}
 
 	return macAddrs
+}
+func GetOsType() string {
+	return runtime.GOOS
+}
+
+func Execute(command string) (string, error) {
+	if strings.Contains(GetOsType(), "windows") {
+		cmd := exec.Command("cmd", "/C", command)
+		cmd.Env = os.Environ()
+		output, err := cmd.CombinedOutput()
+		if err != nil {
+			klog.Errorf("output: %s, err: %v", string(output), err)
+			return string(output), err
+		}
+
+		return string(output), nil
+	}
+
+	// default for unix.
+	cmd := exec.Command("/bin/bash", "-c", command)
+	cmd.Env = os.Environ()
+	// cmd.Dir = "/usr/local"
+	// cmd.SysProcAttr = &syscall.SysProcAttr{
+	// 	Setpgid: true,
+	// }
+
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		klog.Errorf("output: %s, err: %v", string(output), err)
+		return string(output), err
+	}
+
+	return string(output), nil
+}
+
+func Execute1(command string, args ...string) (string, error) {
+	cmd := exec.Command(command, args...)
+	cmd.Env = os.Environ()
+
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		klog.Errorf("output: %s, err: %v", string(output), err)
+		return string(output), err
+	}
+
+	return string(output), nil
+}
+
+func SysReboot() error {
+	if strings.Contains(GetOsType(), "windows") {
+		_, err := Execute1("cmd", "/C", "shutdown", "/r", "/t", "0")
+		return err
+	}
+
+	//default for linux.
+	_, err := Execute("reboot")
+	return err
 }
