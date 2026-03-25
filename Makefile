@@ -1,4 +1,4 @@
-TARGETBIN=updateBsp
+TARGETBIN=updateProcess
 .PHONY:	all ${TARGETBIN}.exe ${TARGETBIN} protoc
 
 BUILD_ROOT=$(PWD)

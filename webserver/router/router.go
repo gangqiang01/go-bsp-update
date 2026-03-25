@@ -11,8 +11,7 @@ func InitRouter() *gin.Engine {
 	r.Use(middlewares.Cors())
 	apiv1 := r.Group("/v1")
 	{
-		apiv1.POST("/upload/chunk", v1.UploadChunkHandler)
-		apiv1.PUT("/system/reboot", v1.RebootHandler)
+		apiv1.GET("/system/process", v1.UploadProcessHandler)
 	}
 	return r
 
