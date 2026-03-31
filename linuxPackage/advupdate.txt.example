@@ -1,0 +1,6 @@
+#advimage=y will update uboot and kernel
+#advrootfs=y will update recovery linux file system
+#advapp=y will update app
+advimage=n
+advrootfs=y
+advapp=y

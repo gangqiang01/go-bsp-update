@@ -3,7 +3,9 @@ package v1
 import (
 	"fmt"
 	"io"
+	"os"
 	"strconv"
+	"strings"
 
 	"github.com/edgehook/ithings/common/utils"
 	responce "github.com/edgehook/ithings/webserver/types"
@@ -89,10 +91,31 @@ func UploadChunkHandler(c *gin.Context) {
 }
 
 func RebootHandler(c *gin.Context) {
+	utils.CopyFile("/media/recovery/advupdate.txt.example", "/media/recovery/advupdate.txt")
 	go func() {
 		if err := utils.SysReboot(); err != nil {
 			klog.Errorf("system reboot failed: %v", err)
 		}
 	}()
 	responce.Ok(c)
+}
+
+func UploadProcessHandler(c *gin.Context) {
+	content, err := os.ReadFile("/otapart/update-status")
+	if err != nil {
+		responce.FailWithMessage(fmt.Sprintf("Failed to read the file: %v\n", err), c)
+		return
+	}
+
+	// 2. 去除空白字符并转换为字符串
+	str := strings.TrimSpace(string(content))
+
+	// 3. 转换为整数
+	flag, err := strconv.Atoi(str)
+	if err != nil {
+		responce.FailWithMessage(fmt.Sprintf("Conversion failed: %v (content: %s)\n", err, str), c)
+		return
+	}
+
+	responce.OkWithData(flag, c)
 }

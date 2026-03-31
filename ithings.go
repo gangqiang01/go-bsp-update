@@ -17,7 +17,7 @@ func main() {
 	flag.Set("log_file", logFile)
 	flag.Set("log_file_max_size", "50") //in MB, default as 50MB
 	flag.Set("logtostderr", "false")
-	flag.Set("alsologtostderr", "true")
+	flag.Set("alsologtostderr", "false")
 
 	logs.InitLogs()
 	defer logs.FlushLogs()

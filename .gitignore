@@ -7,8 +7,9 @@
 *.o
 *.obj
 *.log
-bspUpdate 
-bspUpdate.exe
+updateBsp
+updateBsp.exe
+updateBsp-ARM64
 tmp/
 uploads/
 

@@ -9,6 +9,7 @@ import (
 	"sync"
 	"time"
 
+	v1 "github.com/edgehook/ithings/common/types/v1"
 	"github.com/google/uuid"
 	"k8s.io/klog"
 )
@@ -102,10 +103,10 @@ func UpdateUploadStatus(upload *UploadStatus, chunkIndex int, chunkPath string) 
 func MergeChunks(upload *UploadStatus) (string, string, error) {
 	// Create final file path
 	ext := filepath.Ext(upload.FileName)
-	finalPath := "rootfs" + ext
+	finalPath := v1.RecoveryPath + "rootfs" + ext
 
 	// 确保 uploads 目录存在
-	if err := os.MkdirAll("/opt", 0755); err != nil {
+	if err := os.MkdirAll(v1.RecoveryPath, 0755); err != nil {
 		return "", "", fmt.Errorf("Failed to create uploads directory: %v", err)
 	}
 

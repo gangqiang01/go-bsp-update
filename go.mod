@@ -9,6 +9,7 @@ require (
 	github.com/google/uuid v1.3.0
 	github.com/jwzl/beehive v1.0.0
 	github.com/kr/pretty v0.3.0 // indirect
+	github.com/msteinert/pam v1.2.0 // indirect
 	github.com/rogpeppe/go-internal v1.8.0 // indirect
 	github.com/spf13/afero v1.9.2 // indirect
 	github.com/spf13/cobra v1.3.0
