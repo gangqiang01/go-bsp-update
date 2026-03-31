@@ -100,6 +100,21 @@ func RebootHandler(c *gin.Context) {
 	responce.Ok(c)
 }
 
+func IsUpdating(c *gin.Context) {
+	filePath := "/otapart/update-status"
+	_, err := os.Stat(filePath)
+	flag := true
+	if err != nil {
+		if os.IsNotExist(err) {
+			klog.Errorf("The file %s does not exist", filePath)
+			flag = false
+		} else {
+			klog.Errorf("Checking file error: %v", err)
+		}
+	}
+	responce.OkWithData(flag, c)
+}
+
 func UploadProcessHandler(c *gin.Context) {
 	content, err := os.ReadFile("/otapart/update-status")
 	if err != nil {

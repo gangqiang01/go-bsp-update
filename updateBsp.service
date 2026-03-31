@@ -1,0 +1,12 @@
+[Unit]
+Description=updateBsp
+After=systemd-udevd.service network.target
+
+[Service]
+ExecStart=/userdata/updateBsp/startup.sh
+ExecReload=/bin/kill -HUP $MAINPID
+RestartSec=10
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
