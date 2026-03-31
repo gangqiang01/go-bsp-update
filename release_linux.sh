@@ -32,9 +32,10 @@ fi
 cp -a frontend ${RELEASE_ROOT}/
 cp -a conf ${RELEASE_ROOT}/
 cp -a linuxPackage ${RELEASE_ROOT}/
-cp  -a updateBsp updateBsp-ARM64 ${RELEASE_ROOT}/
+cp -a updateBsp updateBsp-ARM64 ${RELEASE_ROOT}/
 [ -a "startup.sh" ] && cp -a startup.sh ${RELEASE_ROOT}/
 [ -a "updateBsp.service" ] && cp -a updateBsp.service  ${RELEASE_ROOT}/
+[ -a "updateBsp-livecd.service" ] && cp -a updateBsp-livecd.service  ${RELEASE_ROOT}/
 
 echo "Syncing...."
 sync;sync;

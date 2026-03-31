@@ -3,7 +3,7 @@ Description=updateBsp
 After=systemd-udevd.service network.target
 
 [Service]
-ExecStart=/media/recovery/webota_release/startup.sh
+ExecStart=/otapart/webota_release/startup.sh
 ExecReload=/bin/kill -HUP $MAINPID
 RestartSec=10
 Restart=always
