@@ -32,6 +32,7 @@ func UploadChunkHandler(c *gin.Context) {
 	// Get form parameters
 	fileName := c.PostForm("name")
 	targetMD5 := c.PostForm("md5")
+	fileId := c.PostForm("fileId")
 	fileSize, _ := strconv.ParseInt(c.PostForm("size"), 10, 64)
 	totalChunks, _ := strconv.Atoi(c.PostForm("chunks"))
 	chunkIndex, _ := strconv.Atoi(c.PostForm("chunk"))
@@ -41,9 +42,11 @@ func UploadChunkHandler(c *gin.Context) {
 		responce.FailWithMessage("Missing required parameters", c)
 		return
 	}
-
+	if fileId == "" {
+		fileId = targetMD5
+	}
 	// 2. Process or create upload session
-	upload := utils.GetOrCreateUpload(targetMD5, fileName, targetMD5, fileSize, totalChunks)
+	upload := utils.GetOrCreateUpload(fileId, fileName, targetMD5, fileSize, totalChunks)
 
 	// Check if chunk has already been uploaded
 	if upload.Received[chunkIndex] {
@@ -60,9 +63,18 @@ func UploadChunkHandler(c *gin.Context) {
 
 	// 4. Update upload status
 	utils.UpdateUploadStatus(upload, chunkIndex, chunkPath)
+	allReceived := true
+	for i := 0; i < upload.TotalChunks; i++ {
+		klog.Infof("Chunk %d received: %v", i, upload.Received[i])
+		if !upload.Received[i] {
+			allReceived = false
+			break
+		}
+	}
 
-	// 5. Check if all chunks have been uploaded
-	if chunkIndex == upload.TotalChunks-1 {
+	if allReceived {
+		// 5. Check if all chunks have been uploaded
+		// if chunkIndex == upload.TotalChunks-1 {
 		klog.Infof("All chunks received for file %s, starting merge", upload.FileName)
 		// Auto merge chunks
 		mergedPath, fileMD5, err := utils.MergeChunks(upload)
